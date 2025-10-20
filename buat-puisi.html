@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buat Puisi - Belajar Puisi Interaktif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Custom CSS untuk font dan animasi */
+        .font-serif-custom {
+            font-family: 'Merriweather', serif;
+        }
+        .font-sans-custom {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Animasi fade-in */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Background pattern */
+        .bg-pattern {
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(231, 212, 181, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(244, 80, 80, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(60, 72, 107, 0.05) 0%, transparent 50%);
+        }
+        
+        /* Smooth scroll dan fix overflow */
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+        
+        body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+        
+        /* Fix untuk semua container */
+        * {
+            box-sizing: border-box;
+        }
+        
+        /* Pastikan tidak ada elemen yang keluar dari viewport */
+        .container, .max-w-7xl, .max-w-4xl {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #FAF7F0;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #E7D4B5;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3C486B;
+        }
+        
+        /* Preview styling */
+        .poetry-preview {
+            background: linear-gradient(135deg, #FAF7F0 0%, #E7D4B5 100%);
+            border: 2px solid #E7D4B5;
+            border-radius: 16px;
+            padding: 24px;
+            min-height: 200px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        /* Template cards */
+        .template-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .template-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        
+        .template-card.selected {
+            border: 2px solid #3C486B;
+            background: linear-gradient(135deg, #3C486B 0%, #F45050 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-pattern min-h-screen font-sans-custom">
+    <!-- Header/Navbar -->
+    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-lg shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-xl font-bold text-[#3C486B]">📜 Belajar Puisi Interaktif</a>
+                </div>
+                
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Beranda</a>
+                        <a href="puisi.html" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Puisi</a>
+                        <a href="buat-puisi.html" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300 font-medium">Buat Puisi</a>
+                        <a href="tentang.html" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Tentang</a>
+                    </div>
+                </div>
+                
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="mobile-menu" class="md:hidden hidden bg-white/95 backdrop-blur-lg">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="block px-3 py-2 text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Beranda</a>
+                <a href="puisi.html" class="block px-3 py-2 text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Puisi</a>
+                <a href="buat-puisi.html" class="block px-3 py-2 text-[#3C486B] hover:text-[#F45050] transition-colors duration-300 font-medium">Buat Puisi</a>
+                <a href="tentang.html" class="block px-3 py-2 text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Tentang</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-16 pb-12 bg-gradient-to-br from-[#FAF7F0] to-[#E7D4B5]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center fade-in">
+                <h1 class="text-4xl sm:text-5xl font-bold text-[#3C486B] mb-6 font-serif-custom">
+                    Kreativitasmu Menanti
+                </h1>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+                    Ungkapkan perasaanmu melalui kata-kata yang indah. 
+                    Pilih template atau mulailah dari awal dengan inspirasi yang tak terbatas.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Template Selection -->
+    <section class="py-20 bg-white/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-3xl sm:text-4xl font-bold text-[#3C486B] mb-4 font-serif-custom">
+                    Pilih Template Puisi
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Mulai dengan template yang sudah tersedia atau buat puisi bebas
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <!-- Template Haiku -->
+                <div class="template-card fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg" data-template="haiku">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">🌸</div>
+                        <h3 class="text-xl font-bold text-[#3C486B] mb-3">Haiku</h3>
+                        <p class="text-sm text-gray-600 mb-4">3 baris dengan pola 5-7-5 suku kata</p>
+                        <div class="text-xs text-gray-500 italic mb-4">
+                            "Bunga mekar di taman<br>
+                            Kupu-kupu hinggap di daun<br>
+                            Senja datang perlahan"
+                        </div>
+                        <button class="select-template-btn bg-[#3C486B] hover:bg-[#F45050] text-white px-4 py-2 rounded-full font-medium transition-all duration-300">
+                            Pilih Template
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Template Pantun -->
+                <div class="template-card fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg" data-template="pantun">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">🌙</div>
+                        <h3 class="text-xl font-bold text-[#3C486B] mb-3">Pantun</h3>
+                        <p class="text-sm text-gray-600 mb-4">4 baris dengan rima a-b-a-b</p>
+                        <div class="text-xs text-gray-500 italic mb-4">
+                            "Pergi ke pasar membeli ikan<br>
+                            Ikan segar dari laut biru<br>
+                            Jangan lupa selalu berdoa<br>
+                            Agar hidup selalu bahagia"
+                        </div>
+                        <button class="select-template-btn bg-[#3C486B] hover:bg-[#F45050] text-white px-4 py-2 rounded-full font-medium transition-all duration-300">
+                            Pilih Template
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Template Bebas -->
+                <div class="template-card fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg" data-template="bebas">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">✨</div>
+                        <h3 class="text-xl font-bold text-[#3C486B] mb-3">Puisi Bebas</h3>
+                        <p class="text-sm text-gray-600 mb-4">Ekspresikan diri tanpa batasan</p>
+                        <div class="text-xs text-gray-500 italic mb-4">
+                            "Kata-kata mengalir bebas<br>
+                            Seperti air di sungai<br>
+                            Tidak ada aturan yang mengikat<br>
+                            Hanya perasaan yang berbicara"
+                        </div>
+                        <button class="select-template-btn bg-[#3C486B] hover:bg-[#F45050] text-white px-4 py-2 rounded-full font-medium transition-all duration-300">
+                            Pilih Template
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Poetry Creation Form -->
+    <section class="py-20 bg-gradient-to-br from-[#FAF7F0] to-[#E7D4B5]">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="fade-in bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-xl">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-[#3C486B] mb-2 font-serif-custom">
+                        Buat Puisimu
+                    </h2>
+                    <p class="text-gray-600">Isi form di bawah ini untuk membuat puisi yang indah</p>
+                </div>
+                
+                <form id="poetry-form">
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-[#3C486B] mb-2">Judul Puisi</label>
+                        <div class="flex gap-3">
+                            <input type="text" id="poetry-title" 
+                                   class="flex-1 px-4 py-3 border border-[#E7D4B5] rounded-lg focus:ring-2 focus:ring-[#3C486B] focus:border-transparent transition-all duration-300"
+                                   placeholder="Masukkan judul puisi...">
+                            <button type="button" id="random-title-btn" 
+                                    class="bg-[#E7D4B5] hover:bg-[#3C486B] text-[#3C486B] hover:text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
+                                🎲 Acak Judul
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-[#3C486B] mb-2">Isi Puisi</label>
+                        <textarea id="poetry-content" 
+                                  class="w-full h-64 px-4 py-3 border border-[#E7D4B5] rounded-lg focus:ring-2 focus:ring-[#3C486B] focus:border-transparent transition-all duration-300 resize-none"
+                                  placeholder="Tuliskan puisimu di sini...&#10;&#10;Tips:&#10;- Gunakan kata-kata yang indah&#10;- Ekspresikan perasaanmu dengan bebas&#10;- Jangan takut untuk bereksperimen dengan gaya bahasa"></textarea>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="button" id="preview-btn" 
+                                class="bg-[#F45050] hover:bg-[#3C486B] text-white px-8 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl mr-4">
+                            👁️ Preview Puisi
+                        </button>
+                        <button type="button" id="save-poetry-btn" 
+                                class="bg-[#3C486B] hover:bg-[#F45050] text-white px-8 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                            💾 Simpan Puisi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Poetry Preview Modal -->
+    <div id="preview-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-[#3C486B] font-serif-custom">Preview Puisi</h3>
+                <button id="close-preview" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            
+            <div id="poetry-preview-content" class="poetry-preview">
+                <!-- Preview content will be inserted here -->
+            </div>
+            
+            <div class="text-center mt-6">
+                <button id="save-from-preview" 
+                        class="bg-[#3C486B] hover:bg-[#F45050] text-white px-8 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                    💾 Simpan Puisi Ini
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tips Section -->
+    <section class="py-20 bg-white/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-3xl sm:text-4xl font-bold text-[#3C486B] mb-4 font-serif-custom">
+                    Tips Menulis Puisi
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Beberapa tips untuk membantu Anda menulis puisi yang lebih baik
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Tip 1 -->
+                <div class="fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div class="text-3xl mb-4">💭</div>
+                    <h3 class="text-lg font-bold text-[#3C486B] mb-3">Mulai dengan Perasaan</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Puisi yang baik berasal dari perasaan yang tulus. Mulailah dengan emosi yang ingin Anda ekspresikan.
+                    </p>
+                </div>
+                
+                <!-- Tip 2 -->
+                <div class="fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div class="text-3xl mb-4">🎨</div>
+                    <h3 class="text-lg font-bold text-[#3C486B] mb-3">Gunakan Metafora</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Metafora membuat puisi lebih hidup dan bermakna. Bandingkan perasaan dengan objek yang familiar.
+                    </p>
+                </div>
+                
+                <!-- Tip 3 -->
+                <div class="fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div class="text-3xl mb-4">✂️</div>
+                    <h3 class="text-lg font-bold text-[#3C486B] mb-3">Edit dan Revisi</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Puisi pertama jarang yang sempurna. Baca ulang, edit, dan perbaiki sampai Anda puas.
+                    </p>
+                </div>
+                
+                <!-- Tip 4 -->
+                <div class="fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div class="text-3xl mb-4">🔍</div>
+                    <h3 class="text-lg font-bold text-[#3C486B] mb-3">Perhatikan Ritme</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Ritme dan irama membuat puisi lebih enak dibaca. Coba baca keras untuk merasakan ritmenya.
+                    </p>
+                </div>
+                
+                <!-- Tip 5 -->
+                <div class="fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div class="text-3xl mb-4">🌱</div>
+                    <h3 class="text-lg font-bold text-[#3C486B] mb-3">Mulai Sederhana</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Tidak perlu rumit. Puisi sederhana dengan makna mendalam lebih baik daripada yang rumit tapi kosong.
+                    </p>
+                </div>
+                
+                <!-- Tip 6 -->
+                <div class="fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div class="text-3xl mb-4">📚</div>
+                    <h3 class="text-lg font-bold text-[#3C486B] mb-3">Baca Puisi Lain</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Membaca puisi karya orang lain akan memperkaya kosakata dan inspirasi Anda.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#3C486B] text-white py-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="fade-in">
+                <h3 class="text-2xl font-bold mb-4 font-serif-custom">Belajar Puisi Interaktif</h3>
+                <p class="text-lg mb-6 max-w-2xl mx-auto leading-relaxed">
+                    Platform edukatif yang memperkenalkan keindahan sastra Indonesia 
+                    dengan cara yang menyenangkan dan interaktif.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                    <a href="index.html" 
+                       class="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-full font-medium transition-all duration-300">
+                        🏠 Kembali ke Beranda
+                    </a>
+                    <a href="puisi.html" 
+                       class="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-full font-medium transition-all duration-300">
+                        📚 Jelajahi Puisi
+                    </a>
+                    <a href="tentang.html" 
+                       class="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-full font-medium transition-all duration-300">
+                        ℹ️ Pelajari Lebih Lanjut
+                    </a>
+                </div>
+                
+                <div class="border-t border-white/20 pt-6">
+                    <p class="text-sm">
+                        © 2025 Belajar Puisi Interaktif — Dibuat dengan cinta untuk 
+                        <span class="text-[#F45050] font-medium">sastra Indonesia</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Daftar judul acak untuk tombol "Acak Judul"
+        const randomTitles = [
+            "Senja di Ujung Kota",
+            "Rindu dalam Hujan", 
+            "Langit yang Lupa Tidur",
+            "Bulan di Atas Meja Kayu",
+            "Angin yang Membawa Cerita",
+            "Mimpi di Pagi Buta",
+            "Cinta dalam Diam",
+            "Waktu yang Terhenti",
+            "Hujan dan Kenangan",
+            "Bintang di Atas Kepala",
+            "Laut yang Berbisik",
+            "Gunung yang Menyimpan Rahasia",
+            "Kota yang Tak Pernah Tidur",
+            "Musim yang Berubah",
+            "Jalan yang Menuju Pulang"
+        ];
+
+        // Template examples
+        const templates = {
+            haiku: {
+                title: "Haiku",
+                content: "Bunga mekar di taman\nKupu-kupu hinggap di daun\nSenja datang perlahan",
+                placeholder: "Baris 1 (5 suku kata)\nBaris 2 (7 suku kata)\nBaris 3 (5 suku kata)"
+            },
+            pantun: {
+                title: "Pantun",
+                content: "Pergi ke pasar membeli ikan\nIkan segar dari laut biru\nJangan lupa selalu berdoa\nAgar hidup selalu bahagia",
+                placeholder: "Baris 1 (rima a)\nBaris 2 (rima b)\nBaris 3 (rima a)\nBaris 4 (rima b)"
+            },
+            bebas: {
+                title: "Puisi Bebas",
+                content: "Kata-kata mengalir bebas\nSeperti air di sungai\nTidak ada aturan yang mengikat\nHanya perasaan yang berbicara",
+                placeholder: "Tuliskan puisimu dengan bebas...\n\nTips:\n- Gunakan kata-kata yang indah\n- Ekspresikan perasaanmu\n- Jangan takut bereksperimen"
+            }
+        };
+
+        // Fungsi untuk menampilkan animasi fade-in saat scroll
+        function handleScrollAnimation() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        // Fungsi untuk mobile menu toggle
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        // Fungsi untuk acak judul
+        function generateRandomTitle() {
+            const randomIndex = Math.floor(Math.random() * randomTitles.length);
+            const titleInput = document.getElementById('poetry-title');
+            titleInput.value = randomTitles[randomIndex];
+            
+            // Efek animasi pada input
+            titleInput.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                titleInput.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        // Fungsi untuk memilih template
+        function selectTemplate(templateType) {
+            const template = templates[templateType];
+            const titleInput = document.getElementById('poetry-title');
+            const contentInput = document.getElementById('poetry-content');
+            
+            titleInput.value = template.title;
+            contentInput.value = template.content;
+            contentInput.placeholder = template.placeholder;
+            
+            // Update template card selection
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelector(`[data-template="${templateType}"]`).classList.add('selected');
+        }
+
+        // Fungsi untuk preview puisi
+        function previewPoetry() {
+            const title = document.getElementById('poetry-title').value;
+            const content = document.getElementById('poetry-content').value;
+            
+            if (!title.trim() || !content.trim()) {
+                alert('Mohon isi judul dan isi puisi terlebih dahulu!');
+                return;
+            }
+            
+            const previewContent = document.getElementById('poetry-preview-content');
+            previewContent.innerHTML = `
+                <h2 class="text-2xl font-bold text-[#3C486B] mb-6 font-serif-custom text-center">${title}</h2>
+                <div class="text-lg text-gray-800 font-serif-custom leading-relaxed whitespace-pre-line">${content}</div>
+            `;
+            
+            document.getElementById('preview-modal').classList.remove('hidden');
+            document.getElementById('preview-modal').classList.add('flex');
+        }
+
+        // Fungsi untuk menyimpan puisi
+        function savePoetry() {
+            const title = document.getElementById('poetry-title').value;
+            const content = document.getElementById('poetry-content').value;
+            
+            if (!title.trim() || !content.trim()) {
+                alert('Mohon isi judul dan isi puisi terlebih dahulu!');
+                return;
+            }
+            
+            // Simulasi penyimpanan
+            alert(`Puisimu tersimpan di hati 💖\n\nJudul: ${title}\n\nTerima kasih telah berbagi keindahan!`);
+            
+            // Reset form
+            document.getElementById('poetry-title').value = '';
+            document.getElementById('poetry-content').value = '';
+            document.getElementById('poetry-content').placeholder = 'Tuliskan puisimu di sini...';
+            
+            // Reset template selection
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Scroll animation
+            window.addEventListener('scroll', handleScrollAnimation);
+            handleScrollAnimation(); // Initial check
+            
+            // Mobile menu
+            document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+            
+            // Random title button
+            document.getElementById('random-title-btn').addEventListener('click', generateRandomTitle);
+            
+            // Template selection
+            document.querySelectorAll('.select-template-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const templateType = this.closest('.template-card').dataset.template;
+                    selectTemplate(templateType);
+                });
+            });
+            
+            // Preview button
+            document.getElementById('preview-btn').addEventListener('click', previewPoetry);
+            
+            // Save poetry button
+            document.getElementById('save-poetry-btn').addEventListener('click', savePoetry);
+            
+            // Save from preview button
+            document.getElementById('save-from-preview').addEventListener('click', function() {
+                document.getElementById('preview-modal').classList.add('hidden');
+                document.getElementById('preview-modal').classList.remove('flex');
+                savePoetry();
+            });
+            
+            // Close preview modal
+            document.getElementById('close-preview').addEventListener('click', function() {
+                document.getElementById('preview-modal').classList.add('hidden');
+                document.getElementById('preview-modal').classList.remove('flex');
+            });
+            
+            // Close modal when clicking outside
+            document.getElementById('preview-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                    this.classList.remove('flex');
+                }
+            });
+            
+            // Auto-resize textarea
+            const textarea = document.getElementById('poetry-content');
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+        });
+    </script>
+</body>
+</html>

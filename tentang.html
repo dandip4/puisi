@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tentang - Belajar Puisi Interaktif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Custom CSS untuk font dan animasi */
+        .font-serif-custom {
+            font-family: 'Merriweather', serif;
+        }
+        .font-sans-custom {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Animasi fade-in */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Background pattern */
+        .bg-pattern {
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(231, 212, 181, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(244, 80, 80, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(60, 72, 107, 0.05) 0%, transparent 50%);
+        }
+        
+        /* Smooth scroll dan fix overflow */
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+        
+        body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+        
+        /* Fix untuk semua container */
+        * {
+            box-sizing: border-box;
+        }
+        
+        /* Pastikan tidak ada elemen yang keluar dari viewport */
+        .container, .max-w-7xl, .max-w-4xl {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #FAF7F0;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #E7D4B5;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3C486B;
+        }
+        
+        /* Timeline styling */
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background: #3C486B;
+            border-radius: 50%;
+            border: 3px solid #FAF7F0;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 12px;
+            width: 2px;
+            height: calc(100% + 1rem);
+            background: #E7D4B5;
+        }
+        
+        .timeline-item:last-child::after {
+            display: none;
+        }
+        
+        /* Dictionary styling */
+        .dictionary-item {
+            transition: all 0.3s ease;
+        }
+        
+        .dictionary-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-pattern min-h-screen font-sans-custom">
+    <!-- Header/Navbar -->
+    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-lg shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-xl font-bold text-[#3C486B]">📜 Belajar Puisi Interaktif</a>
+                </div>
+                
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Beranda</a>
+                        <a href="puisi.html" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Puisi</a>
+                        <a href="buat-puisi.html" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Buat Puisi</a>
+                        <a href="tentang.html" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300 font-medium">Tentang</a>
+                    </div>
+                </div>
+                
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="mobile-menu" class="md:hidden hidden bg-white/95 backdrop-blur-lg">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="block px-3 py-2 text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Beranda</a>
+                <a href="puisi.html" class="block px-3 py-2 text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Puisi</a>
+                <a href="buat-puisi.html" class="block px-3 py-2 text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Buat Puisi</a>
+                <a href="tentang.html" class="block px-3 py-2 text-[#3C486B] hover:text-[#F45050] transition-colors duration-300 font-medium">Tentang</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-16 pb-12 bg-gradient-to-br from-[#FAF7F0] to-[#E7D4B5]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center fade-in">
+                <h1 class="text-4xl sm:text-5xl font-bold text-[#3C486B] mb-6 font-serif-custom">
+                    Tentang Platform Kami
+                </h1>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+                    Mengenal lebih dalam tentang Belajar Puisi Interaktif dan misi kami 
+                    dalam memperkenalkan keindahan sastra Indonesia
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Platform -->
+    <section class="py-20 bg-white/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="fade-in">
+                    <h2 class="text-3xl font-bold text-[#3C486B] mb-6 font-serif-custom">
+                        Mengapa Belajar Puisi Interaktif?
+                    </h2>
+                    <p class="text-lg text-gray-600 mb-6 leading-relaxed">
+                        Belajar Puisi Interaktif lahir dari keprihatinan akan semakin berkurangnya minat 
+                        generasi muda terhadap sastra Indonesia, khususnya puisi. Kami percaya bahwa 
+                        puisi adalah jendela untuk memahami keindahan bahasa dan ekspresi perasaan.
+                    </p>
+                    <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                        Platform ini dirancang untuk membuat pembelajaran puisi menjadi lebih menyenangkan, 
+                        interaktif, dan mudah dipahami melalui teknologi modern.
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-[#3C486B] mb-2">100+</div>
+                            <div class="text-sm text-gray-600">Puisi Tersedia</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-[#3C486B] mb-2">50+</div>
+                            <div class="text-sm text-gray-600">Gaya Bahasa</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-[#3C486B] mb-2">24/7</div>
+                            <div class="text-sm text-gray-600">Akses Gratis</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-[#3C486B] mb-2">100%</div>
+                            <div class="text-sm text-gray-600">Interaktif</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="fade-in">
+                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+                        <h3 class="text-2xl font-bold text-[#3C486B] mb-6 font-serif-custom text-center">
+                            Misi Kami
+                        </h3>
+                        <div class="space-y-6">
+                            <div class="flex items-start space-x-4">
+                                <div class="text-2xl">🎯</div>
+                                <div>
+                                    <h4 class="font-semibold text-[#3C486B] mb-2">Edukasi Interaktif</h4>
+                                    <p class="text-gray-600 text-sm">Membuat pembelajaran puisi menjadi menyenangkan dan mudah dipahami</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div class="text-2xl">📚</div>
+                                <div>
+                                    <h4 class="font-semibold text-[#3C486B] mb-2">Pelestarian Budaya</h4>
+                                    <p class="text-gray-600 text-sm">Melestarikan dan memperkenalkan karya sastra Indonesia</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div class="text-2xl">✨</div>
+                                <div>
+                                    <h4 class="font-semibold text-[#3C486B] mb-2">Kreativitas</h4>
+                                    <p class="text-gray-600 text-sm">Mendorong generasi muda untuk mengekspresikan diri melalui puisi</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div class="text-2xl">🌍</div>
+                                <div>
+                                    <h4 class="font-semibold text-[#3C486B] mb-2">Akses Global</h4>
+                                    <p class="text-gray-600 text-sm">Membuat sastra Indonesia dapat diakses oleh siapa saja, di mana saja</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sejarah Puisi Indonesia -->
+    <section class="py-20 bg-gradient-to-br from-[#FAF7F0] to-[#E7D4B5]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-3xl sm:text-4xl font-bold text-[#3C486B] mb-4 font-serif-custom">
+                    Sejarah Puisi Indonesia
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Perjalanan panjang perkembangan puisi Indonesia dari masa ke masa
+                </p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="space-y-8">
+                    <!-- Era Kolonial -->
+                    <div class="timeline-item fade-in">
+                        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                            <div class="flex items-center mb-4">
+                                <h3 class="text-xl font-bold text-[#3C486B]">Era Kolonial (1900-1945)</h3>
+                                <span class="ml-3 text-2xl">📜</span>
+                            </div>
+                            <p class="text-gray-600 leading-relaxed">
+                                Puisi Indonesia modern dimulai dengan munculnya Balai Pustaka yang menerbitkan 
+                                karya-karya sastra. Penulis seperti Muhammad Yamin dan Rustam Effendi mulai 
+                                menulis puisi dengan bahasa Indonesia yang lebih modern.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Era Angkatan 45 -->
+                    <div class="timeline-item fade-in">
+                        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                            <div class="flex items-center mb-4">
+                                <h3 class="text-xl font-bold text-[#3C486B]">Angkatan 45 (1945-1960)</h3>
+                                <span class="ml-3 text-2xl">🔥</span>
+                            </div>
+                            <p class="text-gray-600 leading-relaxed">
+                                Era Chairil Anwar dan teman-temannya yang revolusioner. Puisi menjadi lebih 
+                                bebas, ekspresif, dan mencerminkan semangat kemerdekaan. Karya-karya seperti 
+                                "Aku" dan "Krawang-Bekasi" menjadi ikon puisi Indonesia.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Era Angkatan 66 -->
+                    <div class="timeline-item fade-in">
+                        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                            <div class="flex items-center mb-4">
+                                <h3 class="text-xl font-bold text-[#3C486B]">Angkatan 66 (1960-1980)</h3>
+                                <span class="ml-3 text-2xl">🌊</span>
+                            </div>
+                            <p class="text-gray-600 leading-relaxed">
+                                Dipelopori oleh Taufik Ismail, WS Rendra, dan Sapardi Djoko Damono. 
+                                Puisi menjadi lebih sosial dan politis, mencerminkan kondisi masyarakat 
+                                pada masa Orde Baru.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Era Modern -->
+                    <div class="timeline-item fade-in">
+                        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                            <div class="flex items-center mb-4">
+                                <h3 class="text-xl font-bold text-[#3C486B]">Era Modern (1980-Sekarang)</h3>
+                                <span class="ml-3 text-2xl">✨</span>
+                            </div>
+                            <p class="text-gray-600 leading-relaxed">
+                                Puisi Indonesia berkembang dengan berbagai gaya dan tema. Penulis seperti 
+                                Joko Pinurbo, Goenawan Mohamad, dan Afrizal Malna membawa warna baru 
+                                dengan eksperimen bahasa dan bentuk yang lebih bebas.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kamus Puisi -->
+    <section class="py-20 bg-white/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-3xl sm:text-4xl font-bold text-[#3C486B] mb-4 font-serif-custom">
+                    Kamus Istilah Puisi
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Pelajari istilah-istilah penting dalam dunia puisi
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Metafora -->
+                <div class="dictionary-item fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                    <div class="text-3xl mb-4">🎭</div>
+                    <h3 class="text-lg font-bold text-[#3C486B] mb-3">Metafora</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Penggunaan kata atau frasa untuk menggambarkan sesuatu dengan cara yang tidak literal, 
+                        tetapi dengan makna yang lebih dalam dan bermakna.
+                    </p>
+                    <div class="mt-3 text-xs text-gray-500 italic">
+                        Contoh: "Hati adalah samudra yang tak bertepi"
+                    </div>
+                </div>
+                
+                <!-- Personifikasi -->
+                <div class="dictionary-item fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                    <div class="text-3xl mb-4">👤</div>
+                    <h3 class="text-lg font-bold text-[#3C486B] mb-3">Personifikasi</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Memberikan sifat-sifat manusia kepada benda mati, hewan, atau konsep abstrak 
+                        untuk membuatnya lebih hidup dan bermakna.
+                    </p>
+                    <div class="mt-3 text-xs text-gray-500 italic">
+                        Contoh: "Angin berbisik di daun-daun"
+                    </div>
+                </div>
+                
+                <!-- Simile -->
+                <div class="dictionary-item fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                    <div class="text-3xl mb-4">🔗</div>
+                    <h3 class="text-lg font-bold text-[#3C486B] mb-3">Simile</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Perbandingan langsung antara dua hal yang berbeda menggunakan kata "seperti", 
+                        "bagaikan", atau "laksana".
+                    </p>
+                    <div class="mt-3 text-xs text-gray-500 italic">
+                        Contoh: "Wajahnya seperti bulan purnama"
+                    </div>
+                </div>
+                
+                <!-- Hiperbola -->
+                <div class="dictionary-item fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                    <div class="text-3xl mb-4">📈</div>
+                    <h3 class="text-lg font-bold text-[#3C486B] mb-3">Hiperbola</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Penggunaan kata-kata yang berlebihan untuk menekankan suatu hal atau 
+                        menciptakan efek dramatis.
+                    </p>
+                    <div class="mt-3 text-xs text-gray-500 italic">
+                        Contoh: "Aku menunggu seribu tahun"
+                    </div>
+                </div>
+                
+                <!-- Repetisi -->
+                <div class="dictionary-item fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                    <div class="text-3xl mb-4">🔄</div>
+                    <h3 class="text-lg font-bold text-[#3C486B] mb-3">Repetisi</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Pengulangan kata, frasa, atau baris untuk menciptakan ritme dan menekankan makna.
+                    </p>
+                    <div class="mt-3 text-xs text-gray-500 italic">
+                        Contoh: "Berlari, berlari, berlari"
+                    </div>
+                </div>
+                
+                <!-- Rima -->
+                <div class="dictionary-item fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                    <div class="text-3xl mb-4">🎵</div>
+                    <h3 class="text-lg font-bold text-[#3C486B] mb-3">Rima</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Persamaan bunyi pada akhir kata dalam baris-baris puisi yang menciptakan 
+                        irama dan keindahan.
+                    </p>
+                    <div class="mt-3 text-xs text-gray-500 italic">
+                        Contoh: "taman - jalan" (rima a-a)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="py-20 bg-gradient-to-br from-[#FAF7F0] to-[#E7D4B5]">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 fade-in">
+                <h2 class="text-3xl sm:text-4xl font-bold text-[#3C486B] mb-4 font-serif-custom">
+                    Hubungi Kami
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Ada saran, kritik, atau pertanyaan? Kami senang mendengar dari Anda!
+                </p>
+            </div>
+            
+            <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-xl">
+                <form class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-[#3C486B] mb-2">Nama</label>
+                            <input type="text" 
+                                   class="w-full px-4 py-3 border border-[#E7D4B5] rounded-lg focus:ring-2 focus:ring-[#3C486B] focus:border-transparent transition-all duration-300"
+                                   placeholder="Masukkan nama Anda">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-[#3C486B] mb-2">Email</label>
+                            <input type="email" 
+                                   class="w-full px-4 py-3 border border-[#E7D4B5] rounded-lg focus:ring-2 focus:ring-[#3C486B] focus:border-transparent transition-all duration-300"
+                                   placeholder="Masukkan email Anda">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-[#3C486B] mb-2">Subjek</label>
+                        <input type="text" 
+                               class="w-full px-4 py-3 border border-[#E7D4B5] rounded-lg focus:ring-2 focus:ring-[#3C486B] focus:border-transparent transition-all duration-300"
+                               placeholder="Subjek pesan">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-[#3C486B] mb-2">Pesan</label>
+                        <textarea rows="5" 
+                                  class="w-full px-4 py-3 border border-[#E7D4B5] rounded-lg focus:ring-2 focus:ring-[#3C486B] focus:border-transparent transition-all duration-300 resize-none"
+                                  placeholder="Tuliskan pesan Anda di sini..."></textarea>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" 
+                                class="bg-[#3C486B] hover:bg-[#F45050] text-white px-8 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                            Kirim Pesan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#3C486B] text-white py-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="fade-in">
+                <h3 class="text-2xl font-bold mb-4 font-serif-custom">Belajar Puisi Interaktif</h3>
+                <p class="text-lg mb-6 max-w-2xl mx-auto leading-relaxed">
+                    Platform edukatif yang memperkenalkan keindahan sastra Indonesia 
+                    dengan cara yang menyenangkan dan interaktif.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                    <a href="index.html" 
+                       class="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-full font-medium transition-all duration-300">
+                        🏠 Kembali ke Beranda
+                    </a>
+                    <a href="puisi.html" 
+                       class="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-full font-medium transition-all duration-300">
+                        📚 Jelajahi Puisi
+                    </a>
+                    <a href="buat-puisi.html" 
+                       class="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-full font-medium transition-all duration-300">
+                        ✍️ Buat Puisi
+                    </a>
+                </div>
+                
+                <div class="border-t border-white/20 pt-6">
+                    <p class="text-sm">
+                        © 2025 Belajar Puisi Interaktif — Dibuat dengan cinta untuk 
+                        <span class="text-[#F45050] font-medium">sastra Indonesia</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Fungsi untuk menampilkan animasi fade-in saat scroll
+        function handleScrollAnimation() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        // Fungsi untuk mobile menu toggle
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Scroll animation
+            window.addEventListener('scroll', handleScrollAnimation);
+            handleScrollAnimation(); // Initial check
+            
+            // Mobile menu
+            document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+            
+            // Form submission
+            document.querySelector('form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Terima kasih atas pesan Anda! Kami akan segera merespons. 💌');
+                this.reset();
+            });
+        });
+    </script>
+</body>
+</html>

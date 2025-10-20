@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aku - Chairil Anwar | Belajar Puisi Interaktif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Custom CSS untuk font dan animasi */
+        .font-serif-custom {
+            font-family: 'Merriweather', serif;
+        }
+        .font-sans-custom {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Animasi fade-in */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Tooltip styling */
+        .tooltip {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .tooltip:hover {
+            background-color: rgba(252, 191, 73, 0.2);
+            border-radius: 4px;
+            padding: 2px 4px;
+            transform: scale(1.05);
+        }
+        
+        .tooltip-content {
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #3C486B;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-width: 200px;
+            word-wrap: break-word;
+            white-space: normal;
+        }
+        
+        .tooltip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #3C486B;
+        }
+        
+        .tooltip:hover .tooltip-content {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Background pattern */
+        .bg-pattern {
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(231, 212, 181, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(244, 80, 80, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(60, 72, 107, 0.05) 0%, transparent 50%);
+        }
+        
+        /* Smooth scroll dan fix overflow */
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+        
+        body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+        
+        /* Fix untuk semua container */
+        * {
+            box-sizing: border-box;
+        }
+        
+        /* Pastikan tidak ada elemen yang keluar dari viewport */
+        .container, .max-w-7xl, .max-w-4xl {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        /* Fix untuk prose content */
+        .prose {
+            max-width: 100%;
+            overflow-wrap: break-word;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #FAF7F0;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #E7D4B5;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3C486B;
+        }
+        
+        /* Poetry line styling */
+        .poetry-line {
+            transition: all 0.3s ease;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin: 2px 0;
+        }
+        
+        .poetry-line:hover {
+            background-color: rgba(252, 191, 73, 0.1);
+            transform: translateX(4px);
+        }
+        
+        /* Analysis card styling */
+        .analysis-card {
+            transition: all 0.3s ease;
+        }
+        
+        .analysis-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        /* Audio player styling */
+        .audio-player {
+            background: linear-gradient(135deg, #FAF7F0 0%, #E7D4B5 100%);
+            border: 2px solid #E7D4B5;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-pattern min-h-screen font-sans-custom">
+    <!-- Header/Navbar -->
+    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-lg shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-xl font-bold text-[#3C486B]">📜 Belajar Puisi Interaktif</a>
+                </div>
+                
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Beranda</a>
+                        <a href="puisi.html" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Puisi</a>
+                        <a href="buat-puisi.html" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Buat Puisi</a>
+                        <a href="tentang.html" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Tentang</a>
+                    </div>
+                </div>
+                
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="mobile-menu" class="md:hidden hidden bg-white/95 backdrop-blur-lg">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="block px-3 py-2 text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Beranda</a>
+                <a href="puisi.html" class="block px-3 py-2 text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Puisi</a>
+                <a href="buat-puisi.html" class="block px-3 py-2 text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Buat Puisi</a>
+                <a href="tentang.html" class="block px-3 py-2 text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Tentang</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="pt-16 pb-4 bg-white/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="text-sm">
+                <ol class="flex items-center space-x-2">
+                    <li><a href="index.html" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Beranda</a></li>
+                    <li class="text-gray-400">/</li>
+                    <li><a href="puisi.html" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">Puisi</a></li>
+                    <li class="text-gray-400">/</li>
+                    <li class="text-gray-600">Aku - Chairil Anwar</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="py-12 bg-gradient-to-br from-[#FAF7F0] to-[#E7D4B5]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center fade-in">
+                <h1 class="text-4xl sm:text-5xl font-bold text-[#3C486B] mb-4 font-serif-custom">
+                    Aku
+                </h1>
+                <p class="text-xl text-gray-600 mb-2">Chairil Anwar</p>
+                <p class="text-sm text-gray-500 mb-8">Puisi Klasik • Angkatan 45</p>
+                
+                <div class="flex flex-wrap justify-center gap-4">
+                    <span class="bg-[#3C486B] text-white px-4 py-2 rounded-full text-sm font-medium">📜 Puisi Klasik</span>
+                    <span class="bg-[#F45050] text-white px-4 py-2 rounded-full text-sm font-medium">🔥 Angkatan 45</span>
+                    <span class="bg-[#E7D4B5] text-[#3C486B] px-4 py-2 rounded-full text-sm font-medium">🎭 Metafora</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Puisi Content -->
+    <section class="py-20 bg-white/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Puisi Text -->
+                <div class="fade-in">
+                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+                        <h2 class="text-2xl font-bold text-[#3C486B] mb-6 font-serif-custom">Teks Puisi</h2>
+                        
+                        <div class="prose prose-lg max-w-none">
+                            <div class="poetry-line">
+                                <span class="tooltip">
+                                    <span class="tooltip-content">Metafora tentang waktu kematian yang tak terhindarkan</span>
+                                    Kalau sampai waktuku
+                                </span>
+                            </div>
+                            <div class="poetry-line">
+                                <span class="tooltip">
+                                    <span class="tooltip-content">Metafora tentang keinginan untuk tidak dimanja saat mati</span>
+                                    ku mau tak seorang kan merayu
+                                </span>
+                            </div>
+                            <div class="poetry-line">
+                                <span class="tooltip">
+                                    <span class="tooltip-content">Penekanan bahwa bahkan orang terdekat pun tidak perlu merayu</span>
+                                    tidak juga kau
+                                </span>
+                            </div>
+                            <div class="poetry-line mt-4">
+                                <span class="tooltip">
+                                    <span class="tooltip-content">Metafora tentang kesedihan yang berlebihan dan tidak perlu</span>
+                                    Tak perlu sedu sedan itu
+                                </span>
+                            </div>
+                            <div class="poetry-line">
+                                <span class="tooltip">
+                                    <span class="tooltip-content">Metafora tentang diri sebagai makhluk liar yang tidak bisa dijinakkan</span>
+                                    aku ini binatang jalang
+                                </span>
+                            </div>
+                            <div class="poetry-line">
+                                <span class="tooltip">
+                                    <span class="tooltip-content">Metafora tentang keterasingan dari masyarakat</span>
+                                    dari kumpulannya terbuang
+                                </span>
+                            </div>
+                            <div class="poetry-line mt-4">
+                                <span class="tooltip">
+                                    <span class="tooltip-content">Metafora tentang penderitaan fisik yang tidak menghalangi semangat</span>
+                                    Biar peluru menembus kulitku
+                                </span>
+                            </div>
+                            <div class="poetry-line">
+                                <span class="tooltip">
+                                    <span class="tooltip-content">Metafora tentang semangat yang tetap berkobar meski terluka</span>
+                                    aku tetap meradang menerjang
+                                </span>
+                            </div>
+                            <div class="poetry-line mt-4">
+                                <span class="tooltip">
+                                    <span class="tooltip-content">Metafora tentang penderitaan yang dibawa sebagai kekuatan</span>
+                                    Luka dan bisa kubawa berlari
+                                </span>
+                            </div>
+                            <div class="poetry-line">
+                                <span class="tooltip">
+                                    <span class="tooltip-content">Repetisi untuk menekankan gerakan terus-menerus</span>
+                                    berlari
+                                </span>
+                            </div>
+                            <div class="poetry-line">
+                                <span class="tooltip">
+                                    <span class="tooltip-content">Metafora tentang penderitaan yang hilang karena gerakan</span>
+                                    sampai hilang pedih peri
+                                </span>
+                            </div>
+                            <div class="poetry-line mt-4">
+                                <span class="tooltip">
+                                    <span class="tooltip-content">Metafora tentang ketidakpedulian yang semakin besar</span>
+                                    Dan aku akan lebih tidak perduli
+                                </span>
+                            </div>
+                            <div class="poetry-line">
+                                <span class="tooltip">
+                                    <span class="tooltip-content">Metafora hiperbola tentang keinginan hidup yang sangat panjang</span>
+                                    Aku mau hidup seribu tahun lagi
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Audio Player -->
+                <div class="fade-in">
+                    <div class="audio-player">
+                        <h2 class="text-2xl font-bold text-[#3C486B] mb-6 font-serif-custom">Audio Pembacaan</h2>
+                        
+                        <div class="flex items-center justify-center space-x-4 mb-6">
+                            <button id="play-btn" class="bg-[#3C486B] hover:bg-[#F45050] text-white p-4 rounded-full transition-all duration-300 transform hover:scale-105">
+                                <svg id="play-icon" class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                                <svg id="pause-icon" class="w-8 h-8 hidden" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                                </svg>
+                            </button>
+                            
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-3">
+                                    <span id="current-time" class="text-sm text-gray-600 font-mono">0:00</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-3">
+                                        <div id="progress" class="bg-[#3C486B] h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                    </div>
+                                    <span id="duration" class="text-sm text-gray-600 font-mono">0:00</span>
+                                </div>
+                            </div>
+                            
+                            <button id="volume-btn" class="text-[#3C486B] hover:text-[#F45050] transition-colors duration-300">
+                                <svg id="volume-on" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                                </svg>
+                                <svg id="volume-off" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div id="audio-status" class="text-sm text-gray-600 mb-2">
+                                🎵 Klik play untuk mendengarkan pembacaan puisi
+                            </div>
+                            <div class="text-xs text-gray-500">
+                                Dibacakan oleh: Pembaca Profesional
+                            </div>
+                        </div>
+                        
+                        <audio id="audio-player" preload="metadata">
+                            <source src="audio/aku.mp3" type="audio/mpeg">
+                            Browser Anda tidak mendukung elemen audio.
+                        </audio>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Analisis Puisi -->
+    <section class="py-20 bg-gradient-to-br from-[#FAF7F0] to-[#E7D4B5]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-3xl sm:text-4xl font-bold text-[#3C486B] mb-4 font-serif-custom">
+                    Analisis Puisi
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Pemahaman mendalam tentang makna, gaya bahasa, dan konteks historis puisi "Aku"
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Makna Puisi -->
+                <div class="analysis-card fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                    <div class="text-3xl mb-4">💭</div>
+                    <h3 class="text-xl font-bold text-[#3C486B] mb-4">Makna Puisi</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                        Puisi "Aku" menggambarkan semangat perlawanan dan keteguhan hati seorang penyair 
+                        yang tidak ingin dimanja saat menghadapi kematian.
+                    </p>
+                    <div class="text-xs text-gray-500 italic">
+                        "Aku ini binatang jalang dari kumpulannya terbuang" menunjukkan identitas diri yang berbeda dan terasing.
+                    </div>
+                </div>
+                
+                <!-- Gaya Bahasa -->
+                <div class="analysis-card fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                    <div class="text-3xl mb-4">🎭</div>
+                    <h3 class="text-xl font-bold text-[#3C486B] mb-4">Gaya Bahasa</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                        Chairil Anwar menggunakan metafora yang kuat seperti "binatang jalang", "peluru menembus kulitku", 
+                        dan hiperbola "hidup seribu tahun lagi".
+                    </p>
+                    <div class="text-xs text-gray-500 italic">
+                        Metafora dan hiperbola menciptakan efek dramatis yang kuat.
+                    </div>
+                </div>
+                
+                <!-- Konteks Historis -->
+                <div class="analysis-card fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                    <div class="text-3xl mb-4">📜</div>
+                    <h3 class="text-xl font-bold text-[#3C486B] mb-4">Konteks Historis</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                        Ditulis pada masa perjuangan kemerdekaan Indonesia (1943), puisi ini mencerminkan 
+                        semangat revolusioner dan perlawanan terhadap penjajahan.
+                    </p>
+                    <div class="text-xs text-gray-500 italic">
+                        Semangat "meradang menerjang" mencerminkan jiwa perjuangan saat itu.
+                    </div>
+                </div>
+                
+                <!-- Struktur Puisi -->
+                <div class="analysis-card fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                    <div class="text-3xl mb-4">📐</div>
+                    <h3 class="text-xl font-bold text-[#3C486B] mb-4">Struktur Puisi</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                        Puisi terdiri dari 4 bait dengan pola yang tidak terikat aturan tradisional. 
+                        Menggunakan repetisi kata "berlari" untuk menekankan gerakan terus-menerus.
+                    </p>
+                    <div class="text-xs text-gray-500 italic">
+                        Struktur bebas yang khas Angkatan 45.
+                    </div>
+                </div>
+                
+                <!-- Tema Utama -->
+                <div class="analysis-card fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                    <div class="text-3xl mb-4">🎯</div>
+                    <h3 class="text-xl font-bold text-[#3C486B] mb-4">Tema Utama</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                        Tema utama adalah keteguhan hati, perlawanan, dan keinginan untuk hidup dengan 
+                        semangat yang tidak pernah padam meski menghadapi penderitaan.
+                    </p>
+                    <div class="text-xs text-gray-500 italic">
+                        "Aku mau hidup seribu tahun lagi" menunjukkan keinginan hidup yang sangat kuat.
+                    </div>
+                </div>
+                
+                <!-- Pengaruh -->
+                <div class="analysis-card fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                    <div class="text-3xl mb-4">🌟</div>
+                    <h3 class="text-xl font-bold text-[#3C486B] mb-4">Pengaruh</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                        Puisi ini menjadi ikon puisi Indonesia modern dan mempengaruhi banyak penyair 
+                        generasi berikutnya dengan gaya bahasa yang revolusioner.
+                    </p>
+                    <div class="text-xs text-gray-500 italic">
+                        Dianggap sebagai puisi terbaik Chairil Anwar.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Biografi Penulis -->
+    <section class="py-20 bg-white/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-3xl sm:text-4xl font-bold text-[#3C486B] mb-4 font-serif-custom">
+                    Tentang Chairil Anwar
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Mengenal lebih dekat penyair legendaris yang mengubah wajah puisi Indonesia
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="fade-in">
+                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+                        <h3 class="text-2xl font-bold text-[#3C486B] mb-6 font-serif-custom">Biografi Singkat</h3>
+                        
+                        <div class="space-y-4 text-gray-600">
+                            <p><strong class="text-[#3C486B]">Nama Lengkap:</strong> Chairil Anwar</p>
+                            <p><strong class="text-[#3C486B]">Lahir:</strong> 26 Juli 1922, Medan, Sumatera Utara</p>
+                            <p><strong class="text-[#3C486B]">Wafat:</strong> 28 April 1949, Jakarta (usia 26 tahun)</p>
+                            <p><strong class="text-[#3C486B]">Era:</strong> Angkatan 45</p>
+                            <p><strong class="text-[#3C486B]">Gelar:</strong> "Si Binatang Jalang"</p>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <h4 class="text-lg font-semibold text-[#3C486B] mb-3">Karya Terkenal:</h4>
+                            <ul class="text-gray-600 space-y-2">
+                                <li>• Aku (1943)</li>
+                                <li>• Krawang-Bekasi (1948)</li>
+                                <li>• Diponegoro (1943)</li>
+                                <li>• Senja di Pelabuhan Kecil (1946)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="fade-in">
+                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+                        <h3 class="text-2xl font-bold text-[#3C486B] mb-6 font-serif-custom">Kontribusi</h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-[#3C486B] mb-2">Revolusi Puisi Indonesia</h4>
+                                <p class="text-gray-600 text-sm leading-relaxed">
+                                    Chairil Anwar membawa perubahan besar dalam puisi Indonesia dengan gaya bahasa 
+                                    yang lebih bebas, ekspresif, dan tidak terikat aturan tradisional.
+                                </p>
+                            </div>
+                            
+                            <div>
+                                <h4 class="text-lg font-semibold text-[#3C486B] mb-2">Semangat Perjuangan</h4>
+                                <p class="text-gray-600 text-sm leading-relaxed">
+                                    Puisi-puisinya mencerminkan semangat perjuangan kemerdekaan dan menjadi 
+                                    inspirasi bagi generasi muda pada masa itu.
+                                </p>
+                            </div>
+                            
+                            <div>
+                                <h4 class="text-lg font-semibold text-[#3C486B] mb-2">Warisan Sastra</h4>
+                                <p class="text-gray-600 text-sm leading-relaxed">
+                                    Meski hidup singkat, Chairil Anwar meninggalkan warisan sastra yang 
+                                    mempengaruhi perkembangan puisi Indonesia modern.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Puisi Terkait -->
+    <section class="py-20 bg-gradient-to-br from-[#FAF7F0] to-[#E7D4B5]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-3xl sm:text-4xl font-bold text-[#3C486B] mb-4 font-serif-custom">
+                    Puisi Terkait
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Jelajahi puisi-puisi lain dari Chairil Anwar dan penyair Angkatan 45
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Krawang-Bekasi -->
+                <div class="fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div class="text-center">
+                        <h3 class="text-xl font-bold text-[#3C486B] mb-3 font-serif-custom">Krawang-Bekasi</h3>
+                        <p class="text-sm text-gray-500 mb-4">Chairil Anwar</p>
+                        <div class="text-sm text-gray-600 italic mb-6">
+                            "Kami yang kini terbaring antara Krawang-Bekasi<br>
+                            tidak bisa teriak 'Merdeka' dan angkat senjata lagi..."
+                        </div>
+                        <a href="#" class="bg-[#3C486B] hover:bg-[#F45050] text-white px-4 py-2 rounded-full font-medium transition-all duration-300 text-sm">
+                            Baca Puisi →
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Diponegoro -->
+                <div class="fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div class="text-center">
+                        <h3 class="text-xl font-bold text-[#3C486B] mb-3 font-serif-custom">Diponegoro</h3>
+                        <p class="text-sm text-gray-500 mb-4">Chairil Anwar</p>
+                        <div class="text-sm text-gray-600 italic mb-6">
+                            "Di masa pembangunan ini<br>
+                            tuan hidup kembali<br>
+                            Dan bara kagum menjadi api..."
+                        </div>
+                        <a href="#" class="bg-[#3C486B] hover:bg-[#F45050] text-white px-4 py-2 rounded-full font-medium transition-all duration-300 text-sm">
+                            Baca Puisi →
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Senja di Pelabuhan Kecil -->
+                <div class="fade-in bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div class="text-center">
+                        <h3 class="text-xl font-bold text-[#3C486B] mb-3 font-serif-custom">Senja di Pelabuhan Kecil</h3>
+                        <p class="text-sm text-gray-500 mb-4">Chairil Anwar</p>
+                        <div class="text-sm text-gray-600 italic mb-6">
+                            "Ini kali tidak ada yang mencari cinta<br>
+                            di antara gudang, rumah tua, pada cerita<br>
+                            tiang serta temali..."
+                        </div>
+                        <a href="#" class="bg-[#3C486B] hover:bg-[#F45050] text-white px-4 py-2 rounded-full font-medium transition-all duration-300 text-sm">
+                            Baca Puisi →
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="puisi.html" 
+                   class="bg-[#F45050] hover:bg-[#3C486B] text-white px-8 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                    Lihat Semua Puisi
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#3C486B] text-white py-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="fade-in">
+                <h3 class="text-2xl font-bold mb-4 font-serif-custom">Belajar Puisi Interaktif</h3>
+                <p class="text-lg mb-6 max-w-2xl mx-auto leading-relaxed">
+                    Platform edukatif yang memperkenalkan keindahan sastra Indonesia 
+                    dengan cara yang menyenangkan dan interaktif.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                    <a href="index.html" 
+                       class="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-full font-medium transition-all duration-300">
+                        🏠 Kembali ke Beranda
+                    </a>
+                    <a href="puisi.html" 
+                       class="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-full font-medium transition-all duration-300">
+                        📚 Jelajahi Puisi
+                    </a>
+                    <a href="buat-puisi.html" 
+                       class="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-full font-medium transition-all duration-300">
+                        ✍️ Buat Puisi
+                    </a>
+                </div>
+                
+                <div class="border-t border-white/20 pt-6">
+                    <p class="text-sm">
+                        © 2025 Belajar Puisi Interaktif — Dibuat dengan cinta untuk 
+                        <span class="text-[#F45050] font-medium">sastra Indonesia</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Fungsi untuk menampilkan animasi fade-in saat scroll
+        function handleScrollAnimation() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        // Fungsi untuk mobile menu toggle
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        // Audio Player Functions
+        function initAudioPlayer() {
+            const audio = document.getElementById('audio-player');
+            const playBtn = document.getElementById('play-btn');
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            const progressBar = document.getElementById('progress');
+            const currentTimeSpan = document.getElementById('current-time');
+            const durationSpan = document.getElementById('duration');
+            const volumeBtn = document.getElementById('volume-btn');
+            const volumeOnIcon = document.getElementById('volume-on');
+            const volumeOffIcon = document.getElementById('volume-off');
+            const audioStatus = document.getElementById('audio-status');
+            
+            let isPlaying = false;
+            let isMuted = false;
+            
+            // Format waktu dalam menit:detik
+            function formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+            
+            // Update progress bar
+            function updateProgress() {
+                if (audio.duration) {
+                    const progress = (audio.currentTime / audio.duration) * 100;
+                    progressBar.style.width = `${progress}%`;
+                    currentTimeSpan.textContent = formatTime(audio.currentTime);
+                }
+            }
+            
+            // Update duration
+            function updateDuration() {
+                if (audio.duration) {
+                    durationSpan.textContent = formatTime(audio.duration);
+                    audioStatus.textContent = '🎵 Audio siap diputar';
+                }
+            }
+            
+            // Play/Pause functionality
+            playBtn.addEventListener('click', function() {
+                if (isPlaying) {
+                    audio.pause();
+                    playIcon.classList.remove('hidden');
+                    pauseIcon.classList.add('hidden');
+                    isPlaying = false;
+                    audioStatus.textContent = '⏸️ Audio dijeda';
+                } else {
+                    audio.play();
+                    playIcon.classList.add('hidden');
+                    pauseIcon.classList.remove('hidden');
+                    isPlaying = true;
+                    audioStatus.textContent = '▶️ Audio diputar';
+                }
+            });
+            
+            // Volume toggle
+            volumeBtn.addEventListener('click', function() {
+                if (isMuted) {
+                    audio.volume = 1;
+                    volumeOnIcon.classList.remove('hidden');
+                    volumeOffIcon.classList.add('hidden');
+                    isMuted = false;
+                } else {
+                    audio.volume = 0;
+                    volumeOnIcon.classList.add('hidden');
+                    volumeOffIcon.classList.remove('hidden');
+                    isMuted = true;
+                }
+            });
+            
+            // Progress bar click to seek
+            progressBar.parentElement.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const width = rect.width;
+                const clickTime = (clickX / width) * audio.duration;
+                audio.currentTime = clickTime;
+            });
+            
+            // Audio event listeners
+            audio.addEventListener('loadedmetadata', updateDuration);
+            audio.addEventListener('timeupdate', updateProgress);
+            audio.addEventListener('ended', function() {
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                isPlaying = false;
+                progressBar.style.width = '0%';
+                currentTimeSpan.textContent = '0:00';
+                audioStatus.textContent = '🏁 Audio selesai diputar';
+            });
+            
+            // Error handling
+            audio.addEventListener('error', function() {
+                console.error('Error loading audio file');
+                playBtn.disabled = true;
+                playBtn.innerHTML = '<span class="text-sm">❌ Audio tidak tersedia</span>';
+                audioStatus.textContent = '❌ Error loading audio';
+            });
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Scroll animation
+            window.addEventListener('scroll', handleScrollAnimation);
+            handleScrollAnimation(); // Initial check
+            
+            // Mobile menu
+            document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+            
+            // Initialize audio player
+            initAudioPlayer();
+        });
+    </script>
+</body>
+</html>
